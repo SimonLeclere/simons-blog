@@ -15,6 +15,12 @@ const colors = {
   error: 'border-l-red-500 bg-red-50 text-red-900 dark:bg-red-500/10 dark:text-red-300 dark:border-l-red-400',
 }
 
+/** Convert <Callout>content</Callout> to blockquote */
+export const stripCallout = (s: string) =>
+  s.replaceAll(/<Callout[^>]*>([\s\S]*?)<\/Callout>/g, (_m, inner: string) =>
+    inner.trim().split('\n').map((l: string) => `> ${l}`).join('\n')
+  )
+
 export default function Callout({ type = 'default', children }: { type?: keyof typeof icons; children: ReactNode }) {
   const Icon = icons[type] || icons.default
   return (
