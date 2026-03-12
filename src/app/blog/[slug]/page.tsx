@@ -23,9 +23,22 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
       : `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${char}</text></svg>`
     return {
       title: post.title,
+      description: post.excerpt,
       icons: { icon: favicon },
+      openGraph: {
+        title: post.title,
+        description: post.excerpt,
+        type: 'article',
+        publishedTime: post.date,
+      },
+      twitter: {
+        card: 'summary',
+        title: post.title,
+        description: post.excerpt,
+      },
     }
-  } catch {
+  } catch (e) {
+    console.error(`generateMetadata failed for slug "${slug}":`, e)
     return { title: 'Post not found' }
   }
 }

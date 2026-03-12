@@ -70,9 +70,14 @@ export function getAllPosts(): PostSummary[] {
   return fs
     .readdirSync(postsDirectory)
     .filter((f) => f.endsWith(".mdx"))
-    .map((f) => {
-      const { slug, frontmatter } = getPostData(f);
-      return { slug, ...frontmatter };
+    .flatMap((f) => {
+      try {
+        const { slug, frontmatter } = getPostData(f);
+        return [{ slug, ...frontmatter }];
+      } catch (e) {
+        console.error(`Failed to parse ${f}:`, e);
+        return [];
+      }
     })
     .filter((p) => isPostVisible(p))
     .sort((a, b) => (a.date > b.date ? -1 : 1));

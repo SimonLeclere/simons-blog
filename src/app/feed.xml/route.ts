@@ -8,7 +8,7 @@ export async function GET() {
 
     const feed = new Feed({
       title: "Simon's Blog",
-      description: "Technical blog about web development",
+      description: "Blog technique sur le développement web",
       id: siteURL,
       link: siteURL,
       language: "fr",
@@ -52,7 +52,6 @@ export async function GET() {
     return new Response(feed.rss2(), {
       headers: {
         "Content-Type": "application/xml",
-        "Access-Control-Allow-Origin": "*",
         "Cache-Control": "public, max-age=1200",
       },
     });
