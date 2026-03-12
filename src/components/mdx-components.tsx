@@ -1,5 +1,6 @@
 import React from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import Callout from './mdx/callout'
 import Bookmark from './mdx/bookmark'
 import Columns from './mdx/columns'
@@ -8,7 +9,7 @@ import Pre from './mdx/pre'
 const Figure = ({ src, caption, alt, className, width = "100%", align = "center" }: any) => (
   <figure className={["my-8 pt-1", align === 'left' ? 'mr-auto' : align === 'right' ? 'ml-auto' : 'mx-auto', className].filter(Boolean).join(' ')} style={{ width }}>
     <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-zinc-800">
-      <img src={src} alt={alt || caption || ''} className="w-full h-auto object-cover" />
+      <Image src={src} alt={alt || caption || ''} width={1200} height={630} className="w-full h-auto object-cover" loading="lazy" />
     </div>
     {caption && <figcaption className="mt-3 text-center text-sm text-gray-500 dark:text-gray-400 italic">{caption}</figcaption>}
   </figure>
@@ -25,7 +26,7 @@ const Code = (props: any) => {
   return <code className="rounded bg-gray-100 px-1.5 py-0.5 font-mono text-[0.85em] text-blue-600 dark:bg-zinc-800 dark:text-blue-400" {...props} />
 }
 
-const CustomImage = (props: any) => props.title ? <Figure src={props.src} caption={props.title} alt={props.alt} /> : <div className="my-0 overflow-hidden rounded-lg border border-gray-200 dark:border-zinc-800"><img {...props} alt={props.alt || ''} className="w-full h-auto" /></div>
+const CustomImage = (props: any) => props.title ? <Figure src={props.src} caption={props.title} alt={props.alt} /> : <div className="my-0 overflow-hidden rounded-lg border border-gray-200 dark:border-zinc-800"><Image src={props.src} alt={props.alt || ''} width={1200} height={630} className="w-full h-auto" loading="lazy" /></div>
 
 const P = (props: any) => {
   const children = React.Children.toArray(props.children)
