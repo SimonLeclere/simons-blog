@@ -79,6 +79,9 @@ export function getAllPosts(): PostSummary[] {
 }
 
 export function getPostBySlug(slug: string): PostData {
+  if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
+    throw new Error(`Invalid slug: "${slug}"`);
+  }
   const { content, frontmatter } = getPostData(`${slug}.mdx`);
   if (!isPostVisible(frontmatter)) {
     throw new Error(`Post "${slug}" is not available`);

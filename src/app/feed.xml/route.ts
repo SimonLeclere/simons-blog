@@ -1,17 +1,10 @@
 import { Feed } from "feed";
 import { getAllPosts } from "@/lib/posts";
+import { siteURL } from "@/lib/site-url";
 
 export async function GET() {
   try {
     const posts = getAllPosts();
-    
-    const siteURL =
-      process.env.NEXT_PUBLIC_SITE_URL ||
-      (process.env.VERCEL_PROJECT_PRODUCTION_URL
-        ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-        : process.env.VERCEL_URL
-        ? `https://${process.env.VERCEL_URL}`
-        : "http://localhost:3000");
 
     const feed = new Feed({
       title: "Simon's Blog",
@@ -33,14 +26,11 @@ export async function GET() {
     posts.forEach((post) => {
       const postUrl = `${siteURL}/blog/${post.slug}`;
       
-      // Determine image URL: only use if it's a valid absolute or relative URL path, NOT an emoji
-      let imageUrl: string | undefined = undefined;
-      if (post.icon && post.icon.length > 4) { // Heuristic: emojis are short, paths/URLs are longer
-        if (post.icon.startsWith("http")) {
-          imageUrl = post.icon;
-        } else if (post.icon.startsWith("/")) {
-          imageUrl = `${siteURL}${post.icon}`;
-        }
+      let imageUrl: string | undefined;
+      if (post.icon?.startsWith("http")) {
+        imageUrl = post.icon;
+      } else if (post.icon?.startsWith("/")) {
+        imageUrl = `${siteURL}${post.icon}`;
       }
 
       feed.addItem({

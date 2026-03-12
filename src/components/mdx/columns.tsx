@@ -8,5 +8,5 @@ export default function Columns({ children, count = 2, gap = 4, className }: { c
     4: 'grid-cols-1 sm:grid-cols-2 md:grid-cols-4',
   }[count as 1 | 2 | 3 | 4] || 'grid-cols-1 md:grid-cols-2'
 
-  return <div className={`grid ${gridCols} gap-${gap} my-8 items-start ${className || ''}`}>{children}</div>
+  return <div className={`grid ${gridCols} my-8 items-start ${className || ''}`} style={{ gap: `${gap}rem` }}>{children}</div>
 }
