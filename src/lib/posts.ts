@@ -52,7 +52,14 @@ const getPostData = (filename: string) => {
       icon: (data.icon as string) || null,
       author: (data.author as string) || null,
       authorName: (data.authorName as string) || null,
-      readingTime: Math.ceil(content.split(/\s+/).length / 200),
+      readingTime: Math.ceil(
+        content
+          .replace(/<[^>]+>/g, '')       // strip JSX/HTML tags
+          .replace(/```[\s\S]*?```/g, '') // strip code blocks
+          .replace(/import\s.*\n/g, '')   // strip import statements
+          .split(/\s+/)
+          .filter(Boolean).length / 200
+      ),
       draft: (data.draft as boolean) || false,
       devOnly: (data.devOnly as boolean) || false,
     },

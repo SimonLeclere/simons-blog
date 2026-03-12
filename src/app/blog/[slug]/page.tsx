@@ -38,8 +38,7 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
         description: post.excerpt,
       },
     }
-  } catch (e) {
-    console.error(`generateMetadata failed for slug "${slug}":`, e)
+  } catch {
     return { title: 'Post not found' }
   }
 }
