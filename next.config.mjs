@@ -3,10 +3,10 @@ const nextConfig = {
     images: {
         dangerouslyAllowSVG: true,
         remotePatterns: [
-            {
-                protocol: "https",
-                hostname: "**",
-            },
+            { protocol: "https", hostname: "avatars.githubusercontent.com" },
+            { protocol: "https", hostname: "www.mobileread.com" },
+            { protocol: "https", hostname: "openweathermap.org" },
+            { protocol: "https", hostname: "www.google.com" },
         ],
     },
 
