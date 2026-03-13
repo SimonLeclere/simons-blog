@@ -1,7 +1,7 @@
 import BookmarkCard from './bookmark-card'
 
 const ENTITIES: Record<string, string> = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&apos;': "'" }
-const decodeEntities = (s: string) => s.replace(/&(?:amp|lt|gt|quot|#39|apos);/g, (m) => ENTITIES[m])
+const decodeEntities = (s: string) => s.replaceAll(/&(?:amp|lt|gt|quot|#39|apos);/g, (m) => ENTITIES[m])
 
 async function fetchOgData(url: string) {
   try {
@@ -13,15 +13,16 @@ async function fetchOgData(url: string) {
     const html = await res.text()
 
     const getMetaContent = (property: string, attr = 'property') => {
-      const match =
-        html.match(new RegExp(`<meta[^>]+${attr}=["']${property}["'][^>]+content=["']([^"']+)["']`, 'i')) ||
-        html.match(new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+${attr}=["']${property}["']`, 'i'))
+      const propertyFirstMetaRegex = new RegExp(`<meta[^>]+${attr}=["']${property}["'][^>]+content=["']([^"']+)["']`, 'i')
+      const contentFirstMetaRegex = new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+${attr}=["']${property}["']`, 'i')
+      const match = propertyFirstMetaRegex.exec(html) || contentFirstMetaRegex.exec(html)
       return match?.[1] ? decodeEntities(match[1]) : undefined
     }
 
+    const titleRegex = /<title[^>]*>([^<]*)<\/title>/i
     const title =
       getMetaContent('og:title') ||
-      html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1]?.trim()
+      titleRegex.exec(html)?.[1]?.trim()
 
     const description =
       getMetaContent('og:description') ||
@@ -47,7 +48,7 @@ interface BookmarkProps {
   image?: string
 }
 
-export default async function Bookmark({ url, title, description, icon, image }: BookmarkProps) {
+export default async function Bookmark({ url, title, description, icon, image }: Readonly<BookmarkProps>) {
   const og = await fetchOgData(url)
 
   return (

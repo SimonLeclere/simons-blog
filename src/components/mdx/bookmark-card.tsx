@@ -3,7 +3,15 @@
 import { useState } from 'react'
 import { ExternalLink } from 'lucide-react'
 
-export default function BookmarkCard({ title, description, url, icon, image }: { title: string; description?: string; url: string; icon?: string; image?: string }) {
+type BookmarkCardProps = Readonly<{
+  title: string
+  description?: string
+  url: string
+  icon?: string
+  image?: string
+}>
+
+export default function BookmarkCard({ title, description, url, icon, image }: BookmarkCardProps) {
   const [imageError, setImageError] = useState(false)
   let hostname: string
   try { hostname = new URL(url).hostname } catch { hostname = url }

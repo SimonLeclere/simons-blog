@@ -1,6 +1,13 @@
 import type { ReactNode } from 'react'
 
-export default function Columns({ children, count = 2, gap = 4, className }: { children: ReactNode; count?: number; gap?: string | number; className?: string }) {
+type ColumnsProps = Readonly<{
+  children: ReactNode
+  count?: number
+  gap?: string | number
+  className?: string
+}>
+
+export default function Columns({ children, count = 2, gap = 4, className }: ColumnsProps) {
   const gridCols = {
     1: 'grid-cols-1',
     2: 'grid-cols-1 md:grid-cols-2',

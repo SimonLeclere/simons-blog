@@ -1,6 +1,10 @@
 import '@/styles/global.css'
 import { ReactNode } from 'react'
 
+type RootLayoutProps = Readonly<{
+  children: ReactNode
+}>
+
 export const metadata = {
   title: {
     default: "Simon's Blog",
@@ -17,7 +21,7 @@ export const metadata = {
   },
 }
 
-export default function RootLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }: RootLayoutProps) {
   return (
     <html lang="fr">
       <body className="antialiased selection:bg-blue-100 selection:text-blue-900 dark:selection:bg-blue-900 dark:selection:text-blue-100">

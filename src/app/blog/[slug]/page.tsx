@@ -10,12 +10,14 @@ import { components } from '@/components/mdx'
 import type { Metadata } from 'next'
 
 type Params = Promise<{ slug: string }>
+type GenerateMetadataProps = Readonly<{ params: Params }>
+type BlogPostPageProps = Readonly<{ params: Params }>
 
 export function generateStaticParams() {
   return getAllPosts().map((p) => ({ slug: p.slug }))
 }
 
-export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+export async function generateMetadata({ params }: GenerateMetadataProps): Promise<Metadata> {
   const { slug } = await params
   try {
     const post = getPostBySlug(slug)
@@ -56,7 +58,7 @@ async function fetchAuthor(authorLogin: string | null, authorName: string | null
   }
 }
 
-export default async function BlogPostPage({ params }: { params: Params }) {
+export default async function BlogPostPage({ params }: BlogPostPageProps) {
   const { slug } = await params
 
   let post

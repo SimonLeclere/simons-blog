@@ -15,7 +15,12 @@ const colors = {
   error: 'border-l-red-500 bg-red-50 text-red-900 dark:bg-red-500/10 dark:text-red-300 dark:border-l-red-400',
 }
 
-export default function Callout({ type = 'default', children }: { type?: keyof typeof icons; children: ReactNode }) {
+type CalloutProps = Readonly<{
+  type?: keyof typeof icons
+  children: ReactNode
+}>
+
+export default function Callout({ type = 'default', children }: CalloutProps) {
   const Icon = icons[type] || icons.default
   return (
     <div className={cn("my-6 flex gap-3 rounded-lg border border-gray-200 dark:border-zinc-800/50 border-l-4 p-4", colors[type] || colors.default)}>

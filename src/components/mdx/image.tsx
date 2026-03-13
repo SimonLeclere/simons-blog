@@ -1,7 +1,13 @@
 import Image from 'next/image'
 import Figure from './figure'
 
-export default function CustomImage(props: { src?: string; alt?: string; title?: string }) {
+type CustomImageProps = Readonly<{
+  src?: string
+  alt?: string
+  title?: string
+}>
+
+export default function CustomImage(props: CustomImageProps) {
   if (props.title) {
     return <Figure src={props.src!} caption={props.title} alt={props.alt} />
   }
