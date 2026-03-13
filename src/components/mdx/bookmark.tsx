@@ -1,5 +1,8 @@
 import BookmarkCard from './bookmark-card'
 
+const ENTITIES: Record<string, string> = { '&amp;': '&', '&lt;': '<', '&gt;': '>', '&quot;': '"', '&#39;': "'", '&apos;': "'" }
+const decodeEntities = (s: string) => s.replace(/&(?:amp|lt|gt|quot|#39|apos);/g, (m) => ENTITIES[m])
+
 async function fetchOgData(url: string) {
   try {
     const res = await fetch(url, {
@@ -9,23 +12,26 @@ async function fetchOgData(url: string) {
     if (!res.ok) return {}
     const html = await res.text()
 
-    const getMetaContent = (property: string) => {
-      // Handles both <meta property="og:X" content="Y"> and <meta content="Y" property="og:X">
+    const getMetaContent = (property: string, attr = 'property') => {
       const match =
-        html.match(new RegExp(`<meta[^>]+property=["']${property}["'][^>]+content=["']([^"']+)["']`, 'i')) ||
-        html.match(new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+property=["']${property}["']`, 'i'))
-      return match?.[1]
+        html.match(new RegExp(`<meta[^>]+${attr}=["']${property}["'][^>]+content=["']([^"']+)["']`, 'i')) ||
+        html.match(new RegExp(`<meta[^>]+content=["']([^"']+)["'][^>]+${attr}=["']${property}["']`, 'i'))
+      return match?.[1] ? decodeEntities(match[1]) : undefined
     }
 
     const title =
       getMetaContent('og:title') ||
       html.match(/<title[^>]*>([^<]*)<\/title>/i)?.[1]?.trim()
 
+    const description =
+      getMetaContent('og:description') ||
+      getMetaContent('description', 'name')
+
     const image = getMetaContent('og:image')
 
     return {
-      title,
-      description: getMetaContent('og:description'),
+      title: title ? decodeEntities(title) : undefined,
+      description,
       image: image && !image.startsWith('http') ? new URL(image, url).href : image,
     }
   } catch {
