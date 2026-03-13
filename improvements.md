@@ -11,3 +11,7 @@ Note de l'utilisateur: Je suis d'accord, la page About est très minimaliste pou
 Je pense que ce serait une bonne idée de rendre le site bilingue (français et anglais). Cela permettrait d'atteindre un public plus large. On pourrait détecter la langue du navigateur et afficher le site dans la langue correspondante, avec une option pour changer manuellement la langue (bouton discret).
 
 Pour les posts, on pourrait écrire deux versions (français et anglais). Il faut réfléchir à si on range les traductions dans un dossier nommé, si on ajoute un segment ".en."/".fr." dans les noms de fichiers, ou si on utilise un système de frontmatter pour indiquer la langue.
+
+## 3. Animation subtile au premier chargement de la page
+
+On pourrait animer un peu les lignes grises de la page d'accueil au premier chargement pour rendre le site un peu plus vivant. Un peu comme la homepage de NextJS
