@@ -1,85 +1,148 @@
 ---
-title: "Exemple complet: MDX, image et composant"
+title: "Exemple complet: tous les composants MDX"
 date: "2026-02-14"
-excerpt: "Un article de démonstration pour valider le rendu MDX statique et le mode sombre."
+excerpt: "Article de démonstration de tous les composants MDX disponibles dans le blog."
 icon: "🚀"
 author: "SimonLeclere"
 authorName: "Simon Leclere"
 devOnly: true
 ---
 
-Ce post sert de **jeu de test fonctionnel** pour le blog statique:
+Ce post est un **catalogue vivant** de tous les composants MDX disponibles. Il sert de référence et de test visuel.
 
-- rendu Markdown standard
-- image locale versionnée dans le repo
-- composant React injecté via MDX
-- bloc de code
+## Texte et typographie
 
-<Callout>
-Le contenu est généré statiquement à partir de ce fichier MDX, sans dépendance à Notion.
+Du texte standard avec du **gras**, de l'*italique*, du ~~barré~~ et du `code inline`. On peut aussi avoir des [liens internes](/blog) et des [liens externes](https://nextjs.org) qui s'ouvrent dans un nouvel onglet.
+
+### Listes
+
+- Premier élément
+- Deuxième élément avec du `code`
+- Troisième élément en **gras**
+
+1. Étape un
+2. Étape deux
+3. Étape trois
+
+### Citation
+
+> Les bons artistes copient, les grands artistes volent.
+> — Pablo Picasso
+
+## Callout
+
+Quatre variantes disponibles :
+
+<Callout type="info">
+Ceci est une note d'information pour attirer l'attention du lecteur.
 </Callout>
 
-## Une image locale
+<Callout type="warning">
+Attention, cette opération est irréversible.
+</Callout>
+
+<Callout type="success">
+Le déploiement s'est terminé avec succès.
+</Callout>
+
+<Callout type="error">
+La connexion à la base de données a échoué.
+</Callout>
+
+## Image et Figure
+
+Image markdown standard avec légende (via l'attribut `title`) :
 
 ![Schéma statique MDX](/images/exemple-de-post/sample-diagram.svg "Architecture de rendu MDX statique dans Next.js")
 
-Vous pouvez aussi utiliser le composant `Figure` directement pour plus de contrôle:
+Composant `Figure` avec plus de contrôle (alignement, largeur) :
 
-<Figure 
-  src="/images/exemple-de-post/sample-diagram.svg" 
-  caption="Une légende plus détaillée pour expliquer le flux de données." 
+<Figure
+  src="/images/exemple-de-post/sample-diagram.svg"
+  caption="Le même schéma via le composant Figure, limité à 80% de largeur."
+  width="80%"
 />
 
-## Un tableau Markdown
+## Bookmark
 
-| Élément | Source |
-| --- | --- |
-| Article | `src/content/posts/*.mdx` |
-| Composant | `src/components/mdx/*` |
-| Image | `public/images/*` |
+<Bookmark
+  url="https://nextjs.org"
+  title="Next.js"
+  description="The React Framework for the Web. Used by some of the world's largest companies."
+/>
 
-## Un peu de code
+<Bookmark
+  url="https://github.com/SimonLeclere/simons-blog"
+  title="simons-blog"
+  description="Le code source de ce blog, hébergé sur GitHub."
+/>
 
-```ts title="src/lib/posts.ts" {4}
-export const stack = ['Next.js', 'MDX', 'Vercel']
+## Tableau
 
-function loadPosts() {
-  return getAllPosts()
-}
+| Composant | Fichier | Description |
+| --- | --- | --- |
+| `Figure` | `figure.tsx` | Image avec légende et alignement |
+| `Callout` | `callout.tsx` | Encart info / warning / success / error |
+| `Bookmark` | `bookmark.tsx` | Carte de lien externe |
+| `Columns` | `columns.tsx` | Mise en page en colonnes |
+| `Pre` | `pre.tsx` | Bloc de code avec copie et titre |
+
+## Colonnes
+
+<Columns count={2}>
+<div>
+
+### Colonne gauche
+
+Ce contenu s'affiche à gauche sur desktop et prend toute la largeur sur mobile.
+
+</div>
+<div>
+
+### Colonne droite
+
+Ce contenu s'affiche à droite sur desktop et en dessous sur mobile.
+
+</div>
+</Columns>
+
+## Blocs de code
+
+Code inline : la fonction `getPostBySlug()` accepte un `slug` en paramètre.
+
+Bloc simple :
+
+```ts
+const posts = getAllPosts()
+console.log(`${posts.length} articles trouvés`)
 ```
 
-## Un exemple de code plus long
+Bloc avec titre et ligne surlignée :
 
-```tsx title="src/components/layout.tsx"
-import Head from 'next/head'
-import { ReactNode } from 'react'
-
-type LayoutProps = {
-  children: ReactNode
-  title?: string
-}
-
-export default function Layout({ children, title = 'Mon Blog' }: LayoutProps) {
+```tsx title="src/components/mdx/figure.tsx" {3}
+export default function Figure({ src, caption }: Props) {
   return (
-    <div className="relative min-h-screen">
-      <Head>
-        <title>{title}</title>
-      </Head>
-
-      {/* Grid check marks (crosshairs) */}
-      <div className="fixed top-8 left-8 w-4 h-4 border-l border-t border-gray-300 dark:border-zinc-800 pointer-events-none" />
-      <div className="fixed top-8 right-8 w-4 h-4 border-r border-t border-gray-300 dark:border-zinc-800 pointer-events-none" />
-      <div className="fixed bottom-8 left-8 w-4 h-4 border-l border-b border-gray-300 dark:border-zinc-800 pointer-events-none" />
-      <div className="fixed bottom-8 right-8 w-4 h-4 border-r border-b border-gray-300 dark:border-zinc-800 pointer-events-none" />
-
-      <main className="max-w-4xl mx-auto p-8 relative z-10 bg-white dark:bg-zinc-950 min-h-screen border-x border-dashed border-gray-100 dark:border-zinc-800">
-        {children}
-      </main>
-    </div>
+    <figure className="my-8">
+      <Image src={src} alt={caption || ''} width={1200} height={630} />
+      {caption && <figcaption>{caption}</figcaption>}
+    </figure>
   )
 }
 ```
 
-<Callout type="warning">
-Pense à garder les métadonnées `title`, `date` et `excerpt` dans le frontmatter.
-</Callout>
+Bloc multi-langages pour comparaison :
+
+```python title="hello.py"
+def greet(name: str) -> str:
+    return f"Bonjour {name} !"
+```
+
+```bash title="Terminal"
+curl -H "Accept: text/markdown" https://example.com/blog/mon-post
+```
+
+## Séparateur
+
+---
+
+C'est la fin de la démo. Tous les composants MDX du blog sont illustrés ci-dessus.

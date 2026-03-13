@@ -5,7 +5,7 @@ import Nav from '@/components/nav'
 import PostIcon from '@/components/post-icon'
 import CatSeparator from '@/components/cat-separator'
 import { getAllPosts, getPostBySlug, mdxOptions } from '@/lib/posts'
-import { components } from '@/components/mdx-components'
+import { components } from '@/components/mdx'
 import type { Metadata } from 'next'
 
 type Params = Promise<{ slug: string }>
@@ -105,6 +105,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
           prose-pre:bg-transparent prose-pre:p-0 prose-img:my-0 prose-figure:my-0
           prose-table:m-0
           prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-blockquote:italic
+          prose-code:before:content-none prose-code:after:content-none
           prose-ul:list-disc prose-ul:pl-6 prose-ol:list-decimal prose-ol:pl-6 prose-li:my-2 dark:prose-a:text-blue-400">
           <MDXRemote
             source={post.content}
