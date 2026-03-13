@@ -17,7 +17,7 @@ type Props = {
  *   "https://example.com" → remote image
  *   "🚀"                  → emoji
  */
-export default function PostIcon({ icon, size = 32, className }: Props) {
+export default function PostIcon({ icon, size = 32, className }: Readonly<Props>) {
   if (icon.startsWith('lucide:')) {
     const name = icon.slice(7) // e.g. "terminal"
     // Lucide keys are PascalCase: "terminal" → "Terminal", "arrow-right" → "ArrowRight"

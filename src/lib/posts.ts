@@ -8,6 +8,62 @@ import rehypeAutolinkHeadings from "rehype-autolink-headings";
 
 const postsDirectory = path.join(process.cwd(), "src/content/posts");
 
+const stripForReadingTime = (content: string) =>
+  content
+    .replaceAll(/<[^>]+>/g, "")
+    .replaceAll(/```[\s\S]*?```/g, "")
+    .replaceAll(/import\s.*\n/g, "");
+
+const extractNodeText = (node: any): string => {
+  if (node?.type === "text") return node.value || "";
+  if (!Array.isArray(node?.children)) return "";
+  return node.children.map(extractNodeText).join("");
+};
+
+const hasPrettyCodeTitle = (node: any) =>
+  node?.type === "element" &&
+  (node.properties?.["data-rehype-pretty-code-title"] !== undefined ||
+    node.properties?.["dataRehypePrettyCodeTitle"] !== undefined);
+
+const findFirstPre = (node: any): any => {
+  if (!node) return null;
+  if (node.tagName === "pre") return node;
+  if (!Array.isArray(node.children)) return null;
+
+  for (const child of node.children) {
+    const found = findFirstPre(child);
+    if (found) return found;
+  }
+
+  return null;
+};
+
+const attachPrettyCodeTitleToPre = (node: any) => {
+  if (!Array.isArray(node?.children)) return;
+
+  for (let i = 0; i < node.children.length; i++) {
+    const child = node.children[i];
+
+    if (!hasPrettyCodeTitle(child)) {
+      attachPrettyCodeTitleToPre(child);
+      continue;
+    }
+
+    const titleValue = extractNodeText(child);
+    const siblingsAfter = node.children.slice(i + 1);
+
+    for (const sibling of siblingsAfter) {
+      const targetPre = findFirstPre(sibling);
+      if (!targetPre) continue;
+
+      targetPre.properties["data-title"] = titleValue;
+      node.children.splice(i, 1);
+      i--;
+      break;
+    }
+  }
+};
+
 export type PostSummary = {
   slug: string;
   title: string;
@@ -53,12 +109,7 @@ const getPostData = (filename: string) => {
       author: (data.author as string) || null,
       authorName: (data.authorName as string) || null,
       readingTime: Math.ceil(
-        content
-          .replace(/<[^>]+>/g, '')       // strip JSX/HTML tags
-          .replace(/```[\s\S]*?```/g, '') // strip code blocks
-          .replace(/import\s.*\n/g, '')   // strip import statements
-          .split(/\s+/)
-          .filter(Boolean).length / 200
+        stripForReadingTime(content).split(/\s+/).filter(Boolean).length / 200
       ),
       draft: (data.draft as boolean) || false,
       devOnly: (data.devOnly as boolean) || false,
@@ -127,48 +178,7 @@ export const mdxOptions = {
     ],
     [rehypeAutolinkHeadings, { properties: { className: ["anchor"] } }],
     () => (tree: any) => {
-      const traverse = (node: any) => {
-        if (!node?.children) return;
-        for (let i = 0; i < node.children.length; i++) {
-          const child = node.children[i];
-          const isTitle =
-            child.type === "element" &&
-            (child.properties?.["data-rehype-pretty-code-title"] !==
-              undefined ||
-              child.properties?.["dataRehypePrettyCodeTitle"] !== undefined);
-
-          if (isTitle) {
-            const titleValue = (function getText(n: any): string {
-              return n.type === "text"
-                ? n.value
-                : n.children?.map(getText).join("") || "";
-            })(child);
-
-            const preNode = node.children.slice(i + 1).find((n: any) => {
-              if (n.tagName === "pre") return true;
-              const findInnerPre = (inner: any): any =>
-                inner.tagName === "pre" || inner.children?.find(findInnerPre);
-              return findInnerPre(n);
-            });
-
-            if (preNode) {
-              const targetPre =
-                preNode.tagName === "pre"
-                  ? preNode
-                  : (function findPre(n: any): any {
-                      return n.tagName === "pre"
-                        ? n
-                        : n.children?.map(findPre).find(Boolean);
-                    })(preNode);
-
-              if (targetPre) targetPre.properties["data-title"] = titleValue;
-              node.children.splice(i, 1);
-              i--;
-            }
-          } else traverse(child);
-        }
-      };
-      traverse(tree);
+      attachPrettyCodeTitleToPre(tree);
     },
   ] as any[],
 };

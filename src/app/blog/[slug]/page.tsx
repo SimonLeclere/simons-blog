@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import Nav from '@/components/nav'
+import TableOfContents from '@/components/table-of-contents'
 import PostIcon from '@/components/post-icon'
 import CatSeparator from '@/components/cat-separator'
 import { getAllPosts, getPostBySlug, mdxOptions } from '@/lib/posts'
@@ -77,6 +78,8 @@ export default async function BlogPostPage({ params }: { params: Params }) {
         </svg>
         Retour aux articles
       </Link>
+
+      <TableOfContents />
 
       <article className="mt-8">
         <header className="mb-10 text-center">
