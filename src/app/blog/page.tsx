@@ -1,5 +1,6 @@
 import Link from 'next/link'
 import Nav from '@/components/nav'
+import PostIcon from '@/components/post-icon'
 import { getAllPosts } from '@/lib/posts'
 import { Metadata } from 'next'
 
@@ -24,7 +25,7 @@ export default function BlogIndex() {
                   <span className="absolute inset-0" />
                   {post.icon && (
                     <span className="text-2xl">
-                      {post.icon.startsWith('http') || post.icon.startsWith('/') ? <img src={post.icon} alt="" className="w-8 h-8 object-contain" /> : post.icon}
+                      <PostIcon icon={post.icon} size={28} />
                     </span>
                   )}
                   <span>{post.title}</span>

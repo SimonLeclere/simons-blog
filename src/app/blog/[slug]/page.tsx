@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { notFound } from 'next/navigation'
 import { MDXRemote } from 'next-mdx-remote/rsc'
 import Nav from '@/components/nav'
+import PostIcon from '@/components/post-icon'
 import CatSeparator from '@/components/cat-separator'
 import { getAllPosts, getPostBySlug, mdxOptions } from '@/lib/posts'
 import { components } from '@/components/mdx-components'
@@ -17,14 +18,9 @@ export async function generateMetadata({ params }: { params: Params }): Promise<
   const { slug } = await params
   try {
     const post = getPostBySlug(slug)
-    const char = post.icon || '🍺'
-    const favicon = char.startsWith('http') || char.startsWith('/')
-      ? char
-      : `data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>${char}</text></svg>`
     return {
       title: post.title,
       description: post.excerpt,
-      icons: { icon: favicon },
       openGraph: {
         title: post.title,
         description: post.excerpt,
@@ -86,9 +82,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
         <header className="mb-10 text-center">
           {post.icon && (
             <div className="mb-4 flex justify-center text-6xl">
-              {post.icon.startsWith('http') || post.icon.startsWith('/')
-                ? <img src={post.icon} alt="" className="w-20 h-20 object-contain" />
-                : post.icon}
+              <PostIcon icon={post.icon} size={80} />
             </div>
           )}
           <h1 className="mb-4 text-3xl sm:text-4xl md:text-5xl font-bold tracking-tight text-gray-900 dark:text-gray-100">
