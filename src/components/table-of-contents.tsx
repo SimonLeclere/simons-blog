@@ -118,7 +118,7 @@ export default function TableOfContents() {
   return (
     <div className="fixed right-0 top-0 h-screen hidden xl:block group/toc z-40 pointer-events-none">
       {/* Invisible hover strip along right edge */}
-      <div className="absolute right-0 top-0 h-full w-8 pointer-events-auto" />
+      <div className="absolute right-0 top-0 h-full w-48 pointer-events-auto" />
 
       <nav
         aria-label="Table des matières"
