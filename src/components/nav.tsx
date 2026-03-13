@@ -4,8 +4,7 @@ import { useState, useEffect } from 'react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 import { clsx } from 'clsx'
-import GitHubIcon from '@/components/icons/github'
-import RssIcon from '@/components/icons/rss'
+import { SiGithub, SiRss } from '@icons-pack/react-simple-icons'
 
 const navItems = [
   { label: 'Blog', path: '/blog' },
@@ -74,7 +73,7 @@ export default function Nav() {
               title="GitHub"
               className="flex items-center text-gray-400 hover:text-gray-900 dark:text-zinc-500 dark:hover:text-gray-100 transition-colors"
             >
-              <GitHubIcon />
+              <SiGithub className="h-5 w-5" />
               <span className="sr-only">GitHub</span>
             </Link>
           </li>
@@ -84,7 +83,7 @@ export default function Nav() {
               title="Flux RSS"
               className="flex items-center text-gray-400 hover:text-orange-500 dark:text-zinc-500 dark:hover:text-orange-400 transition-colors"
             >
-              <RssIcon />
+              <SiRss className="h-5 w-5" />
               <span className="sr-only">Flux RSS</span>
             </Link>
           </li>
@@ -124,7 +123,7 @@ export default function Nav() {
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-2 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
           >
-            <GitHubIcon />
+            <SiGithub className="h-5 w-5" />
             GitHub
           </Link>
         </li>
@@ -134,7 +133,7 @@ export default function Nav() {
             onClick={() => setIsOpen(false)}
             className="flex items-center gap-2 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
           >
-            <RssIcon />
+            <SiRss className="h-5 w-5" />
             Flux RSS
           </Link>
         </li>
