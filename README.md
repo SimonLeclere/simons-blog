@@ -18,6 +18,7 @@ pnpm test
 - RSS feed at `/feed.xml`
 - Posts served as raw Markdown at `/blog/:slug.md` or for requests with `Accept: text/markdown`
 - Static generation, Vercel-ready
+- Notion-inspired table of content
 - Unit tests with Vitest
 
 ## Next steps
