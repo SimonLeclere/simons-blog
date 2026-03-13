@@ -107,7 +107,7 @@ export default async function BlogPostPage({ params }: { params: Params }) {
 
         <div className="prose prose-zinc mx-auto dark:prose-invert max-w-none 
           prose-headings:scroll-mt-20 prose-headings:font-semibold prose-headings:tracking-tight 
-          prose-a:text-blue-600 prose-a:no-underline hover:prose-a:underline
+          prose-a:text-blue-600 prose-a:no-underline prose-a:hover:underline
           prose-pre:bg-transparent prose-pre:p-0 prose-img:my-0 prose-figure:my-0
           prose-table:m-0
           prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-blockquote:italic
