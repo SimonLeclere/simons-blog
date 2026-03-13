@@ -80,7 +80,7 @@ export default function AboutPage() {
           </h1>
           <p className="mt-2 text-xl text-gray-600 dark:text-gray-400 text-center sm:text-left">
             Software Engineer at{' '}
-            <img src="/logos/doctolib.svg" alt="Doctolib" className="inline-block h-5 align-middle relative -top-0.5" />{', '}
+            <img src="/logos/doctolib-animated.svg" alt="Doctolib" className="inline-block h-5 align-middle relative -top-0.5" />{', '}
             passionate about building things on the web.
           </p>
           <div className="mt-4 flex gap-3 justify-center sm:justify-start">
