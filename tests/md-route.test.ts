@@ -31,11 +31,11 @@ vi.mock('next/navigation', () => ({
   notFound: () => { throw new Error('Not found') },
 }))
 
-const { GET } = await import('@/app/blog/[slug]/md/route')
+const { GET } = await import('@/app/blog/md/[slug]/route')
 
-describe('/blog/[slug]/md route', () => {
+describe('/blog/md/[slug] route', () => {
   it('returns markdown content for a valid post', async () => {
-    const request = new Request('http://localhost:3000/blog/hello-world/md')
+    const request = new Request('http://localhost:3000/blog/md/hello-world')
     const response = await GET(request, { params: Promise.resolve({ slug: 'hello-world' }) })
     expect(response.status).toBe(200)
     expect(response.headers.get('Content-Type')).toBe('text/markdown; charset=utf-8')
@@ -47,7 +47,7 @@ describe('/blog/[slug]/md route', () => {
   })
 
   it('strips MDX components from content', async () => {
-    const request = new Request('http://localhost:3000/blog/hello-world/md')
+    const request = new Request('http://localhost:3000/blog/md/hello-world')
     const response = await GET(request, { params: Promise.resolve({ slug: 'hello-world' }) })
     const text = await response.text()
     // Figure should be converted to markdown image
@@ -56,7 +56,7 @@ describe('/blog/[slug]/md route', () => {
   })
 
   it('throws not found for invalid slugs', async () => {
-    const request = new Request('http://localhost:3000/blog/nonexistent/md')
+    const request = new Request('http://localhost:3000/blog/md/nonexistent')
     await expect(
       GET(request, { params: Promise.resolve({ slug: 'nonexistent' }) })
     ).rejects.toThrow()

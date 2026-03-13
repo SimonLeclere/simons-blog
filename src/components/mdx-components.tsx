@@ -6,11 +6,6 @@ import Bookmark from './mdx/bookmark'
 import Columns from './mdx/columns'
 import Pre from './mdx/pre'
 
-/** Convert <Figure src="..." caption="..." /> to ![caption](src) */
-export const stripFigure = (s: string) =>
-  s.replaceAll(/<Figure\s+[^>]*?src="([^"]*)"[^>]*?caption="([^"]*)"[^>]*?\/?\s*>/g, '![$2]($1)')
-   .replaceAll(/<Figure\s+[^>]*?src="([^"]*)"[^>]*?\/?\s*>/g, '![]($1)')
-
 const Figure = ({ src, caption, alt, className, width = "100%", align = "center" }: any) => (
   <figure className={["my-8 pt-1", align === 'left' ? 'mr-auto' : align === 'right' ? 'ml-auto' : 'mx-auto', className].filter(Boolean).join(' ')} style={{ width }}>
     <div className="overflow-hidden rounded-xl border border-gray-200 dark:border-zinc-800">

@@ -64,7 +64,8 @@ export async function GET() {
         "Cache-Control": "public, max-age=1200",
       },
     });
-  } catch (error: any) {
-    return new Response(`Error: ${error.message}`, { status: 500 });
+  } catch (error) {
+    console.error('RSS feed generation failed', error);
+    return new Response('Internal server error', { status: 500 });
   }
 }

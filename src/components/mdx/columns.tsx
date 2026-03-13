@@ -1,9 +1,5 @@
 import type { ReactNode } from 'react'
 
-/** Remove <Columns> wrapper tags */
-export const stripColumns = (s: string) =>
-  s.replaceAll(/<\/?(Columns)[^>]*>/g, '')
-
 export default function Columns({ children, count = 2, gap = 4, className }: { children: ReactNode; count?: number; gap?: string | number; className?: string }) {
   const gridCols = {
     1: 'grid-cols-1',

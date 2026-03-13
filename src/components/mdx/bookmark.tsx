@@ -1,16 +1,12 @@
 'use client'
 
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { ExternalLink } from 'lucide-react'
-
-/** Convert <Bookmark url="..." title="..." /> to [title](url) or plain URL */
-export const stripBookmark = (s: string) =>
-  s.replaceAll(/<Bookmark\s+[^>]*?url="([^"]*)"[^>]*?title="([^"]*)"[^>]*?\/?\s*>/g, '[$2]($1)')
-   .replaceAll(/<Bookmark\s+[^>]*?url="([^"]*)"[^>]*?\/?\s*>/g, '$1')
 
 export default function Bookmark({ title, description, url, icon, image }: { title: string; description?: string; url: string; icon?: string; image?: string }) {
   const [imageError, setImageError] = useState(false)
-  const hostname = new URL(url).hostname
+  let hostname: string
+  try { hostname = new URL(url).hostname } catch { hostname = url }
   const favicon = icon || `https://www.google.com/s2/favicons?domain=${hostname}&sz=64`
 
   return (
