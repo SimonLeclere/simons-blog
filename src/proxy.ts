@@ -27,7 +27,7 @@ export function proxy(request: NextRequest) {
     if (pathname.endsWith('.md')) {
       const slug = pathname.replace('/blog/', '').replace('.md', '')
       if (slug) {
-        return NextResponse.rewrite(new URL(`/blog/${slug}/md`, request.url))
+        return NextResponse.rewrite(new URL(`/blog/md/${slug}`, request.url))
       }
     }
 
@@ -36,7 +36,7 @@ export function proxy(request: NextRequest) {
       const slug = pathname.replace('/blog/', '')
       // Don't rewrite if it's already the /md route or other sub-routes
       if (slug && !slug.includes('/')) {
-        return NextResponse.rewrite(new URL(`/blog/${slug}/md`, request.url))
+        return NextResponse.rewrite(new URL(`/blog/md/${slug}`, request.url))
       }
     }
   }
