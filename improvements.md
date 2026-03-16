@@ -9,7 +9,5 @@ Pour les posts, on pourrait écrire deux versions (français et anglais). Il fau
 ## 2. Auto-update "Listening to" via Deezer
 
 La section "Currently" de la page About contient un champ "Listening to" qui est actuellement en dur. On pourrait l'alimenter dynamiquement via l'API Deezer pour afficher le dernier morceau écouté.
-
-## 3. Animation subtile au premier chargement de la page
-
-On pourrait animer un peu les lignes grises de la page d'accueil au premier chargement pour rendre le site un peu plus vivant. Un peu comme la homepage de NextJS
+-> endpoint history
+-> Problème actuel: deezer ne permet pas la création de nouvelles apps pour le moment

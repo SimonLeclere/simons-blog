@@ -1,20 +1,47 @@
 import Nav from '@/components/nav'
 import PostIcon from '@/components/post-icon'
 import DoctolibLogo from '@/components/doctolib-logo'
+import NowPlaying from '@/components/now-playing'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
+import type { ReactNode } from 'react'
 import { BookOpen, Code, Briefcase, Music, Mail } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'About',
 }
 
-const currently = [
-  { icon: BookOpen, label: 'Reading', value: 'HackerNews (everyday)' },
+const currently: { icon: typeof BookOpen; label: string; value: ReactNode }[] = [
+  {
+    icon: BookOpen,
+    label: 'Reading',
+    value: (
+      <>
+        <a
+          href="https://news.ycombinator.com"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-semibold text-[#ff6600] hover:underline"
+        >
+          HackerNews
+        </a>
+        {' '}(everyday)
+      </>
+    ),
+  },
   { icon: Code, label: 'Building', value: 'This blog, always improving' },
   { icon: Briefcase, label: 'Working at', value: 'Doctolib' },
-  { icon: Music, label: 'Listening to', value: 'Fred Again' },
+  {
+    icon: Music,
+    label: 'Listening to',
+    value: (
+      <span className="inline-flex items-center gap-1.5">
+        <span>Fred Again</span>
+        <NowPlaying />
+      </span>
+    ),
+  },
 ]
 
 const projects = [
