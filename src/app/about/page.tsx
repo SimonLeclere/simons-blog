@@ -1,48 +1,14 @@
 import Nav from '@/components/nav'
 import PostIcon from '@/components/post-icon'
 import DoctolibLogo from '@/components/doctolib-logo'
-import NowPlaying from '@/components/now-playing'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
-import type { ReactNode } from 'react'
-import { BookOpen, Code, Briefcase, Music, Mail } from 'lucide-react'
+import { Mail } from 'lucide-react'
 
 export const metadata: Metadata = {
   title: 'About',
 }
-
-const currently: { icon: typeof BookOpen; label: string; value: ReactNode }[] = [
-  {
-    icon: BookOpen,
-    label: 'Reading',
-    value: (
-      <>
-        <a
-          href="https://news.ycombinator.com"
-          target="_blank"
-          rel="noopener noreferrer"
-          className="font-semibold text-[#ff6600] hover:underline"
-        >
-          HackerNews
-        </a>
-        {' '}(everyday)
-      </>
-    ),
-  },
-  { icon: Code, label: 'Building', value: 'This blog, always improving' },
-  { icon: Briefcase, label: 'Working at', value: 'Doctolib' },
-  {
-    icon: Music,
-    label: 'Listening to',
-    value: (
-      <span className="inline-flex items-center gap-1.5">
-        <span>Fred Again</span>
-        <NowPlaying />
-      </span>
-    ),
-  },
-]
 
 const projects = [
   {
@@ -162,34 +128,6 @@ export default function AboutPage() {
           </Link>, and articles live as MDX files, versioned alongside their images and
           components.
         </p>
-      </div>
-
-      {/* Currently */}
-      <div className="mt-12">
-        <h2 className="text-lg font-semibold tracking-tight mb-4">
-          Currently
-        </h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          {currently.map((item) => (
-            <div
-              key={item.label}
-              className="flex items-center gap-3 rounded-lg border border-gray-100 dark:border-zinc-800 px-4 py-3 text-sm"
-            >
-              <item.icon className="h-4 w-4 shrink-0 text-gray-400 dark:text-zinc-500" />
-              <div>
-                <span className="font-medium text-gray-900 dark:text-gray-100">
-                  {item.label}
-                </span>
-                <span className="mx-1.5 text-gray-300 dark:text-zinc-600">
-                  ·
-                </span>
-                <span className="text-gray-600 dark:text-gray-400">
-                  {item.value}
-                </span>
-              </div>
-            </div>
-          ))}
-        </div>
       </div>
 
       {/* Projects */}
