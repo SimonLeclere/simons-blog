@@ -1,5 +1,6 @@
 import Nav from '@/components/nav'
 import PostIcon from '@/components/post-icon'
+import DoctolibLogo from '@/components/doctolib-logo'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Metadata } from 'next'
@@ -80,7 +81,7 @@ export default function AboutPage() {
           </h1>
           <p className="mt-2 text-xl text-gray-600 dark:text-gray-400 text-center sm:text-left">
             Software Engineer at{' '}
-            <img src="/logos/doctolib-animated.svg" alt="Doctolib" className="inline-block h-5 align-middle relative -top-0.5" />{', '}
+            <DoctolibLogo className="inline-block h-5 align-middle relative -top-0.5" />{', '}
             passionate about building things on the web.
           </p>
           <div className="mt-4 flex gap-3 justify-center sm:justify-start">
