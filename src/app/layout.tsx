@@ -1,5 +1,6 @@
 import '@/styles/global.css'
 import { ReactNode } from 'react'
+import { Analytics } from "@vercel/analytics/next"
 
 type RootLayoutProps = Readonly<{
   children: ReactNode
@@ -34,6 +35,7 @@ export default function RootLayout({ children }: RootLayoutProps) {
             {children}
           </main>
         </div>
+        <Analytics />
       </body>
     </html>
   )
