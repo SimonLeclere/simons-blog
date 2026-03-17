@@ -14,7 +14,7 @@ const projects = [
   {
     name: 'Killer',
     description:
-      'A real-life assassination game app for INSA campus. Players scan QR cards to discover targets and weapons. Built for 200+ students, available on the Play Store.',
+      'A real-life assassination game app for INSA campus. Players scan QR cards to discover targets and weapons. Built for 200+ students, available on both the App Store and Play Store.',
     url: 'https://github.com/Killer-INSA',
     icon: '🔪',
     tags: ['React Native', 'Rust'],
@@ -30,7 +30,7 @@ const projects = [
   {
     name: "Simon's Blog",
     description:
-      'The site you are currently reading. MDX articles, dark mode, and pixel art cats.',
+      'The site you are currently reading. MDX articles, RSS feed, and pixel art cats.',
     url: 'https://github.com/SimonLeclere/simons-blog',
     icon: '/favicon.svg',
     tags: ['Next.js', 'MDX', 'Tailwind'],
