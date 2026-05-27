@@ -7,11 +7,17 @@ import PostIcon from '@/components/post-icon'
 import CatSeparator from '@/components/cat-separator'
 import { getAllPosts, getPostBySlug, mdxOptions } from '@/lib/posts'
 import { components } from '@/components/mdx'
+import { siteURL } from '@/lib/site-url'
 import type { Metadata } from 'next'
 
 type Params = Promise<{ slug: string }>
 type GenerateMetadataProps = Readonly<{ params: Params }>
 type BlogPostPageProps = Readonly<{ params: Params }>
+
+const toAbsoluteUrl = (value: string) => {
+  if (value.startsWith('http://') || value.startsWith('https://')) return value
+  return `${siteURL}${value.startsWith('/') ? value : `/${value}`}`
+}
 
 export function generateStaticParams() {
   return getAllPosts().map((p) => ({ slug: p.slug }))
@@ -21,21 +27,32 @@ export async function generateMetadata({ params }: GenerateMetadataProps): Promi
   const { slug } = await params
   try {
     const post = getPostBySlug(slug)
-    return {
+    const postUrl = `${siteURL}/blog/${slug}`
+    const socialImage = post.ogImage || post.coverImage
+    
+    const metadata: Metadata = {
       title: post.title,
       description: post.excerpt,
       openGraph: {
         title: post.title,
         description: post.excerpt,
         type: 'article',
+        url: postUrl,
         publishedTime: post.date,
-      },
-      twitter: {
-        card: 'summary',
-        title: post.title,
-        description: post.excerpt,
+        authors: post.author ? [`https://github.com/${post.author}`] : [],
       },
     }
+    
+    if (socialImage) {
+      metadata.openGraph!.images = [{
+        url: toAbsoluteUrl(socialImage),
+        width: 1200,
+        height: 630,
+        alt: post.title,
+      }]
+    }
+    
+    return metadata
   } catch {
     return { title: 'Post not found' }
   }
@@ -84,7 +101,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
       <TableOfContents />
 
       <article className="mt-8">
-        <header className="mb-10 text-center">
+        <header className="text-center">
           {post.icon && (
             <div className="mb-4 flex justify-center text-6xl">
               <PostIcon icon={post.icon} size={80} />
@@ -103,6 +120,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
             </span>
           </div>
         </header>
+
+        {post.coverImage && (
+          <div className="mt-6 mb-10 overflow-hidden rounded-2xl border border-gray-200 dark:border-zinc-800 bg-gray-50 dark:bg-zinc-900">
+            <img
+              src={post.coverImage}
+              alt={`Image de couverture de ${post.title}`}
+              className="h-60 sm:h-85 w-full object-cover"
+            />
+          </div>
+        )}
 
         <div className="prose prose-zinc mx-auto dark:prose-invert max-w-none 
           prose-headings:scroll-mt-20 prose-headings:font-semibold prose-headings:tracking-tight 

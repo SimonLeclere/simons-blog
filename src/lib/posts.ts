@@ -76,6 +76,8 @@ export type PostSummary = {
   readingTime: number;
   draft: boolean;
   devOnly: boolean;
+  coverImage: string | null;
+  ogImage: string | null;
 };
 
 export type PostData = PostSummary & {
@@ -113,6 +115,8 @@ const getPostData = (filename: string) => {
       ),
       draft: (data.draft as boolean) || false,
       devOnly: (data.devOnly as boolean) || false,
+      coverImage: (data.coverImage as string) || null,
+      ogImage: (data.ogImage as string) || null,
     },
   };
 };

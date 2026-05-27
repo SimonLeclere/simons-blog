@@ -1,6 +1,7 @@
 import '@/styles/global.css'
 import { ReactNode } from 'react'
 import { Analytics } from "@vercel/analytics/next"
+import { siteURL } from '@/lib/site-url'
 
 type RootLayoutProps = Readonly<{
   children: ReactNode
@@ -19,6 +20,12 @@ export const metadata = {
     types: {
       'application/rss+xml': '/feed.xml',
     },
+  },
+  openGraph: {
+    type: 'website',
+    locale: 'fr_FR',
+    url: siteURL,
+    siteName: "Simon's Blog",
   },
 }
 

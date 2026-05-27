@@ -10,6 +10,8 @@ title: "My Post"           # required — displayed as page title and in the lis
 date: "2026-02-14"         # required — ISO format, used for sorting
 excerpt: "Short summary."  # required — displayed in the listing and RSS feed
 icon: "🚀"                 # optional — see Icon formats below
+coverImage: "/images/my-post/cover.jpg" # optional — article cover image (also used for Open Graph by default)
+ogImage: "/images/my-post/og.jpg"       # optional — overrides coverImage for Open Graph cards
 author: "GitHubUsername"   # optional — GitHub username, used to fetch avatar and bio
 authorName: "Display Name" # optional — overrides the name fetched from GitHub
 draft: true                # optional — hides the post everywhere (default: false, overrides devOnly)
