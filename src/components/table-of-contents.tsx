@@ -140,7 +140,7 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
                     style={{
                       // CSS var consumed by the @keyframes toc-bar-in (global.css)
                       ['--toc-bar-w' as string]: finalWidth,
-                      animation: `toc-bar-in 400ms ease-out calc(150ms + ${index} * 40ms) both`,
+                      animation: `toc-bar-in 400ms ease-out calc(150ms + ${index} * 40ms) backwards`,
                       transition: `background-color 200ms, width 300ms ${delay}, opacity 300ms ${delay}`,
                     }}
                   />
