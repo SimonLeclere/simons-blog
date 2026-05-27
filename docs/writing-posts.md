@@ -6,16 +6,16 @@ Posts are `.mdx` files in `src/content/posts/`. Create a file, add frontmatter, 
 
 ```yaml
 ---
-title: "My Post"           # required — displayed as page title and in the listing
-date: "2026-02-14"         # required — ISO format, used for sorting
-excerpt: "Short summary."  # required — displayed in the listing and RSS feed
-icon: "🚀"                 # optional — see Icon formats below
+title: "My Post" # required — displayed as page title and in the listing
+date: "2026-02-14" # required — ISO format, used for sorting
+excerpt: "Short summary." # required — displayed in the listing and RSS feed
+icon: "🚀" # optional — see Icon formats below
 coverImage: "/images/my-post/cover.jpg" # optional — article cover image (also used for Open Graph by default)
-ogImage: "/images/my-post/og.jpg"       # optional — overrides coverImage for Open Graph cards
-author: "GitHubUsername"   # optional — GitHub username, used to fetch avatar and bio
+ogImage: "/images/my-post/og.jpg" # optional — overrides coverImage for Open Graph cards
+author: "GitHubUsername" # optional — GitHub username, used to fetch avatar and bio
 authorName: "Display Name" # optional — overrides the name fetched from GitHub
-draft: true                # optional — hides the post everywhere (default: false, overrides devOnly)
-devOnly: true              # optional — visible in dev, hidden in production (default: false)
+draft: true # optional — hides the post everywhere (default: false, overrides devOnly)
+devOnly: true # optional — visible in dev, hidden in production (default: false)
 ---
 ```
 
@@ -23,13 +23,13 @@ devOnly: true              # optional — visible in dev, hidden in production (
 
 The `icon` field accepts several formats:
 
-| Format | Example | Source |
-|---|---|---|
-| Lucide | `"lucide:terminal"` | [lucide.dev/icons](https://lucide.dev/icons) |
-| Simple Icons | `"si:react"` | [simpleicons.org](https://simpleicons.org) |
-| Local image | `"/images/icon.png"` | `public/` folder |
-| Remote image | `"https://example.com/icon.png"` | Any URL |
-| Emoji | `"🚀"` | Rendered as text |
+| Format       | Example                          | Source                                       |
+| ------------ | -------------------------------- | -------------------------------------------- |
+| Lucide       | `"lucide:terminal"`              | [lucide.dev/icons](https://lucide.dev/icons) |
+| Simple Icons | `"si:react"`                     | [simpleicons.org](https://simpleicons.org)   |
+| Local image  | `"/images/icon.png"`             | `public/` folder                             |
+| Remote image | `"https://example.com/icon.png"` | Any URL                                      |
+| Emoji        | `"🚀"`                           | Rendered as text                             |
 
 ## MDX components
 
@@ -101,11 +101,11 @@ Use standard fenced code blocks. You can add a `title` and highlight specific li
 
 ````md
 ```ts title="src/lib/example.ts" {3,5}
-const a = 1
-const b = 2
-const c = a + b   // highlighted
-const d = 4
-const e = c + d   // highlighted
+const a = 1;
+const b = 2;
+const c = a + b; // highlighted
+const d = 4;
+const e = c + d; // highlighted
 ```
 ````
 

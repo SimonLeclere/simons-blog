@@ -1,33 +1,33 @@
-import '@/styles/global.css'
-import { ReactNode } from 'react'
-import { Analytics } from "@vercel/analytics/next"
-import { siteURL } from '@/lib/site-url'
+import "@/styles/global.css";
+import { ReactNode } from "react";
+import { Analytics } from "@vercel/analytics/next";
+import { siteURL } from "@/lib/site-url";
 
 type RootLayoutProps = Readonly<{
-  children: ReactNode
-}>
+  children: ReactNode;
+}>;
 
 export const metadata = {
   title: {
     default: "Simon's Blog",
     template: "%s - Simon's Blog",
   },
-  description: 'Technical blog about web development',
+  description: "Technical blog about web development",
   icons: {
-    icon: '/favicon.svg',
+    icon: "/favicon.svg",
   },
   alternates: {
     types: {
-      'application/rss+xml': '/feed.xml',
+      "application/rss+xml": "/feed.xml",
     },
   },
   openGraph: {
-    type: 'website',
-    locale: 'fr_FR',
+    type: "website",
+    locale: "fr_FR",
     url: siteURL,
     siteName: "Simon's Blog",
   },
-}
+};
 
 export default function RootLayout({ children }: RootLayoutProps) {
   return (
@@ -45,5 +45,5 @@ export default function RootLayout({ children }: RootLayoutProps) {
         <Analytics />
       </body>
     </html>
-  )
+  );
 }

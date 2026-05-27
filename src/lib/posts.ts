@@ -111,7 +111,7 @@ const getPostData = (filename: string) => {
       author: (data.author as string) || null,
       authorName: (data.authorName as string) || null,
       readingTime: Math.ceil(
-        stripForReadingTime(content).split(/\s+/).filter(Boolean).length / 200
+        stripForReadingTime(content).split(/\s+/).filter(Boolean).length / 200,
       ),
       draft: (data.draft as boolean) || false,
       devOnly: (data.devOnly as boolean) || false,

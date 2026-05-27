@@ -1,98 +1,116 @@
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import { MDXRemote } from 'next-mdx-remote/rsc'
-import Nav from '@/components/nav'
-import TableOfContents from '@/components/table-of-contents'
-import PostIcon from '@/components/post-icon'
-import CatSeparator from '@/components/cat-separator'
-import { getAllPosts, getPostBySlug, mdxOptions } from '@/lib/posts'
-import { components } from '@/components/mdx'
-import { siteURL } from '@/lib/site-url'
-import type { Metadata } from 'next'
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { MDXRemote } from "next-mdx-remote/rsc";
+import Nav from "@/components/nav";
+import TableOfContents from "@/components/table-of-contents";
+import PostIcon from "@/components/post-icon";
+import CatSeparator from "@/components/cat-separator";
+import { getAllPosts, getPostBySlug, mdxOptions } from "@/lib/posts";
+import { components } from "@/components/mdx";
+import { siteURL } from "@/lib/site-url";
+import type { Metadata } from "next";
 
-type Params = Promise<{ slug: string }>
-type GenerateMetadataProps = Readonly<{ params: Params }>
-type BlogPostPageProps = Readonly<{ params: Params }>
+type Params = Promise<{ slug: string }>;
+type GenerateMetadataProps = Readonly<{ params: Params }>;
+type BlogPostPageProps = Readonly<{ params: Params }>;
 
 const toAbsoluteUrl = (value: string) => {
-  if (value.startsWith('http://') || value.startsWith('https://')) return value
-  return `${siteURL}${value.startsWith('/') ? value : `/${value}`}`
-}
+  if (value.startsWith("http://") || value.startsWith("https://")) return value;
+  return `${siteURL}${value.startsWith("/") ? value : `/${value}`}`;
+};
 
 export function generateStaticParams() {
-  return getAllPosts().map((p) => ({ slug: p.slug }))
+  return getAllPosts().map((p) => ({ slug: p.slug }));
 }
 
-export async function generateMetadata({ params }: GenerateMetadataProps): Promise<Metadata> {
-  const { slug } = await params
+export async function generateMetadata({
+  params,
+}: GenerateMetadataProps): Promise<Metadata> {
+  const { slug } = await params;
   try {
-    const post = getPostBySlug(slug)
-    const postUrl = `${siteURL}/blog/${slug}`
-    const socialImage = post.ogImage || post.coverImage
-    
+    const post = getPostBySlug(slug);
+    const postUrl = `${siteURL}/blog/${slug}`;
+    const socialImage = post.ogImage || post.coverImage;
+
     const metadata: Metadata = {
       title: post.title,
       description: post.excerpt,
       openGraph: {
         title: post.title,
         description: post.excerpt,
-        type: 'article',
+        type: "article",
         url: postUrl,
         publishedTime: post.date,
         authors: post.author ? [`https://github.com/${post.author}`] : [],
       },
-    }
-    
+    };
+
     if (socialImage) {
-      metadata.openGraph!.images = [{
-        url: toAbsoluteUrl(socialImage),
-        width: 1200,
-        height: 630,
-        alt: post.title,
-      }]
+      metadata.openGraph!.images = [
+        {
+          url: toAbsoluteUrl(socialImage),
+          width: 1200,
+          height: 630,
+          alt: post.title,
+        },
+      ];
     }
-    
-    return metadata
+
+    return metadata;
   } catch {
-    return { title: 'Post not found' }
+    return { title: "Post not found" };
   }
 }
 
-async function fetchAuthor(authorLogin: string | null, authorName: string | null) {
-  if (!authorLogin) return null
+async function fetchAuthor(
+  authorLogin: string | null,
+  authorName: string | null,
+) {
+  if (!authorLogin) return null;
   try {
-    const res = await fetch(`https://api.github.com/users/${authorLogin}`, { next: { revalidate: 3600 } })
-    if (!res.ok) return null
-    const data = await res.json()
+    const res = await fetch(`https://api.github.com/users/${authorLogin}`, {
+      next: { revalidate: 3600 },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
     return {
       name: authorName || data.name || data.login,
       avatar: data.avatar_url as string,
-      bio: (data.bio || 'Développeur Passionné') as string,
-    }
+      bio: (data.bio || "Développeur Passionné") as string,
+    };
   } catch (e) {
-    console.error('Author fetch failed', e)
-    return null
+    console.error("Author fetch failed", e);
+    return null;
   }
 }
 
 export default async function BlogPostPage({ params }: BlogPostPageProps) {
-  const { slug } = await params
+  const { slug } = await params;
 
-  let post
+  let post;
   try {
-    post = getPostBySlug(slug)
+    post = getPostBySlug(slug);
   } catch {
-    notFound()
+    notFound();
   }
 
-  const author = await fetchAuthor(post.author, post.authorName)
+  const author = await fetchAuthor(post.author, post.authorName);
 
   return (
     <div>
       <Nav />
 
-      <Link href="/blog" className="group mb-8 flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1">
+      <Link
+        href="/blog"
+        className="group mb-8 flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+      >
+        <svg
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          strokeWidth="2"
+          className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
+        >
           <path d="M19 12H5M12 19l-7-7 7-7" />
         </svg>
         Retour aux articles
@@ -113,8 +131,15 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-4 text-sm text-gray-500 dark:text-gray-400">
             <time dateTime={post.date}>{post.formattedDate}</time>
             <span className="flex items-center gap-1">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="h-4 w-4">
-                <circle cx="12" cy="12" r="10" /><path d="M12 6v6l4 2" />
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+                className="h-4 w-4"
+              >
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 6v6l4 2" />
               </svg>
               {post.readingTime} min de lecture
             </span>
@@ -131,14 +156,16 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           </div>
         )}
 
-        <div className="prose prose-zinc mx-auto dark:prose-invert max-w-none 
+        <div
+          className="prose prose-zinc mx-auto dark:prose-invert max-w-none 
           prose-headings:scroll-mt-20 prose-headings:font-semibold prose-headings:tracking-tight 
           prose-a:text-blue-600 prose-a:no-underline prose-a:hover:underline
           prose-pre:bg-transparent prose-pre:p-0 prose-img:my-0 prose-figure:my-0
           prose-table:m-0
           prose-blockquote:border-l-4 prose-blockquote:border-gray-300 prose-blockquote:pl-4 prose-blockquote:italic
           prose-code:before:content-none prose-code:after:content-none
-          prose-ul:list-disc prose-ul:pl-6 prose-ol:list-decimal prose-ol:pl-6 prose-li:my-2 dark:prose-a:text-blue-400">
+          prose-ul:list-disc prose-ul:pl-6 prose-ol:list-decimal prose-ol:pl-6 prose-li:my-2 dark:prose-a:text-blue-400"
+        >
           <MDXRemote
             source={post.content}
             components={components}
@@ -146,23 +173,39 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
           />
         </div>
 
-        <CatSeparator className="mt-4"/>
+        <CatSeparator className="mt-4" />
 
         <div className="py-8 flex flex-col sm:flex-row justify-between items-center sm:items-start gap-6">
-          <Link href="/blog" className="group flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1">
+          <Link
+            href="/blog"
+            className="group flex items-center text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100"
+          >
+            <svg
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1"
+            >
               <path d="M19 12H5M12 19l-7-7 7-7" />
             </svg>
             Retour aux articles
           </Link>
 
           {author && (
-            <Link href={`https://github.com/${post.author}`} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 w-full sm:w-auto sm:max-w-[60%] group/author">
+            <Link
+              href={`https://github.com/${post.author}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-3 w-full sm:w-auto sm:max-w-[60%] group/author"
+            >
               <div className="text-left sm:text-right min-w-0 flex-1">
                 <p className="text-sm font-semibold text-gray-900 dark:text-gray-100 group-hover/author:text-blue-600 dark:group-hover/author:text-blue-400 transition-colors truncate">
                   {author.name}
                 </p>
-                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2">{author.bio}</p>
+                <p className="mt-1 text-xs text-gray-500 dark:text-gray-400 line-clamp-2">
+                  {author.bio}
+                </p>
               </div>
               <div className="h-12 w-12 sm:h-16 sm:w-16 shrink-0 overflow-hidden rounded-full bg-gray-100 dark:bg-zinc-800 border border-gray-100 dark:border-zinc-700 transition-transform">
                 <img
@@ -176,5 +219,5 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         </div>
       </article>
     </div>
-  )
+  );
 }

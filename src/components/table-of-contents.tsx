@@ -40,7 +40,11 @@ export default function TableOfContents() {
         level: Number.parseInt(el.tagName[1]) === primary ? 1 : 2,
       }))
 
-    setHeadings(parsed)
+    const frame = requestAnimationFrame(() => {
+      setHeadings(parsed)
+    })
+
+    return () => cancelAnimationFrame(frame)
   }, [])
 
   // Compute ideal nav width: fit content or cap at 192px (w-48)
@@ -59,7 +63,11 @@ export default function TableOfContents() {
     }
 
     const needed = Math.ceil(maxWidth) + 32 // 28px bar space + 4px buffer
-    setNavWidth(Math.min(needed, 192))
+    const frame = requestAnimationFrame(() => {
+      setNavWidth(Math.min(needed, 192))
+    })
+
+    return () => cancelAnimationFrame(frame)
   }, [headings])
 
   // Scroll handler — sets the target index immediately
