@@ -160,7 +160,6 @@ const getPostData = (filename: string) => {
   return {
     slug,
     content,
-    headings: extractHeadings(content),
     frontmatter: {
       title: data.title as string,
       date: dateStr,
@@ -208,11 +207,11 @@ export function getPostBySlug(slug: string): PostData {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
     throw new Error(`Invalid slug: "${slug}"`);
   }
-  const { content, headings, frontmatter } = getPostData(`${slug}.mdx`);
+  const { content, frontmatter } = getPostData(`${slug}.mdx`);
   if (!isPostVisible(frontmatter)) {
     throw new Error(`Post "${slug}" is not available`);
   }
-  return { slug, ...frontmatter, content, headings };
+  return { slug, ...frontmatter, content, headings: extractHeadings(content) };
 }
 
 export const mdxOptions = {

@@ -1,6 +1,7 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
+import type { CSSProperties } from 'react'
 import type { Heading } from '@/lib/posts'
 
 type TableOfContentsProps = {
@@ -137,12 +138,14 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
                         ? 'bg-gray-800 dark:bg-gray-200'
                         : 'bg-gray-300 dark:bg-zinc-700'}
                     `}
-                    style={{
-                      // CSS var consumed by the @keyframes toc-bar-in (global.css)
-                      ['--toc-bar-w' as string]: finalWidth,
-                      animation: `toc-bar-in 400ms ease-out calc(150ms + ${index} * 40ms) backwards`,
-                      transition: `background-color 200ms, width 300ms ${delay}, opacity 300ms ${delay}`,
-                    }}
+                    style={
+                      {
+                        // CSS var consumed by the @keyframes toc-bar-in (global.css)
+                        '--toc-bar-w': finalWidth,
+                        animation: `toc-bar-in 400ms ease-out calc(150ms + ${index} * 40ms) backwards`,
+                        transition: `background-color 200ms, width 300ms ${delay}, opacity 300ms ${delay}`,
+                      } as CSSProperties
+                    }
                   />
                 </a>
               </li>

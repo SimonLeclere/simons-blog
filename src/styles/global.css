@@ -120,8 +120,7 @@ code {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  @keyframes toc-bar-in {
-    from { width: var(--toc-bar-w); opacity: 1; }
-    to   { width: var(--toc-bar-w); opacity: 1; }
+  [style*="toc-bar-in"] {
+    animation: none !important;
   }
 }
