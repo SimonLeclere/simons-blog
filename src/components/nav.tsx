@@ -13,8 +13,15 @@ const navItems = [
 
 export default function Nav() {
   const pathname = usePathname()
-  const [openForPath, setOpenForPath] = useState<string | null>(null)
-  const isOpen = openForPath === pathname
+  const [isOpen, setIsOpen] = useState(false)
+  const [lastPathname, setLastPathname] = useState(pathname)
+
+  // Reset menu state when pathname changes.
+  // https://react.dev/reference/react/useState#storing-information-from-previous-renders
+  if (pathname !== lastPathname) {
+    setLastPathname(pathname)
+    setIsOpen(false)
+  }
 
   return (
     <nav className="mb-8 border-b border-gray-100 dark:border-zinc-800 pb-8">
@@ -26,7 +33,7 @@ export default function Nav() {
         {/* Hamburger button – visible on mobile only */}
         <button
           className="md:hidden p-2 -mr-2 text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-100 transition-colors"
-          onClick={() => setOpenForPath(isOpen ? null : pathname)}
+          onClick={() => setIsOpen(!isOpen)}
           aria-expanded={isOpen}
           aria-controls="nav-menu"
           aria-label="Toggle navigation"
@@ -101,7 +108,7 @@ export default function Nav() {
             <li key={item.path}>
               <Link
                 href={item.path}
-                onClick={() => setOpenForPath(null)}
+                onClick={() => setIsOpen(false)}
                 className={clsx(
                   "block py-2 text-sm font-medium transition-colors hover:text-gray-900 dark:hover:text-gray-100",
                   isActive ? "text-gray-900 dark:text-gray-100 font-semibold" : "text-gray-500 dark:text-gray-400"
@@ -117,7 +124,7 @@ export default function Nav() {
             href="https://github.com/SimonLeclere/simons-blog"
             target="_blank"
             rel="noopener noreferrer"
-            onClick={() => setOpenForPath(null)}
+            onClick={() => setIsOpen(false)}
             className="flex items-center gap-2 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 transition-colors"
           >
             <SiGithub className="h-5 w-5" />
@@ -127,7 +134,7 @@ export default function Nav() {
         <li>
           <Link
             href="/feed.xml"
-            onClick={() => setOpenForPath(null)}
+            onClick={() => setIsOpen(false)}
             className="flex items-center gap-2 py-2 text-sm font-medium text-gray-500 dark:text-gray-400 hover:text-orange-500 dark:hover:text-orange-400 transition-colors"
           >
             <SiRss className="h-5 w-5" />
