@@ -116,34 +116,35 @@ export default function TableOfContents({ headings }: TableOfContentsProps) {
                     className={`
                       absolute left-0 top-0 right-7 truncate
                       text-[10px] leading-3 text-left
-                      transition-opacity duration-300
                       opacity-0 group-hover/toc:opacity-100
                       ${heading.level === 2 ? 'pl-3' : ''}
                       ${isActive
                         ? 'text-gray-900 dark:text-gray-100 font-medium'
                         : 'text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300'}
                     `}
-                    style={{ transitionDelay: delay }}
+                    style={{
+                      transition: `opacity 200ms var(--ease-out-strong) ${delay}, color 200ms ease`,
+                    }}
                   >
                     {heading.text}
                   </span>
                   {/* Bar — absolute right, vertically centered */}
                   <span
                     className={`
-                      absolute right-0 top-1/2 -translate-y-1/2
+                      absolute right-0 top-1/2 -translate-y-1/2 origin-right
                       h-0.5 rounded-full
                       group-hover/toc:w-0 group-hover/toc:opacity-0
                       ${heading.level === 1 ? 'w-5' : 'w-3'}
                       ${isActive
-                        ? 'bg-gray-800 dark:bg-gray-200'
-                        : 'bg-gray-300 dark:bg-zinc-700'}
+                        ? 'bg-gray-800 dark:bg-gray-200 scale-x-[1.15]'
+                        : 'bg-gray-300 dark:bg-zinc-700 scale-x-100'}
                     `}
                     style={
                       {
                         // CSS var consumed by the @keyframes toc-bar-in (global.css)
                         '--toc-bar-w': finalWidth,
-                        animation: `toc-bar-in 400ms ease-out calc(150ms + ${index} * 40ms) backwards`,
-                        transition: `background-color 200ms, width 300ms ${delay}, opacity 300ms ${delay}`,
+                        animation: `toc-bar-in 320ms var(--ease-out-strong) calc(120ms + ${index} * 40ms) backwards`,
+                        transition: `background-color 200ms ease, transform 220ms var(--ease-out-strong), width 200ms var(--ease-out-strong) ${delay}, opacity 200ms var(--ease-out-strong) ${delay}`,
                       } as CSSProperties
                     }
                   />
