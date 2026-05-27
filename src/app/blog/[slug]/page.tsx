@@ -116,7 +116,7 @@ export default async function BlogPostPage({ params }: BlogPostPageProps) {
         Retour aux articles
       </Link>
 
-      <TableOfContents />
+      <TableOfContents headings={post.headings} />
 
       <article className="mt-8">
         <header className="text-center">

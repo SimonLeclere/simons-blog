@@ -1,10 +1,14 @@
 import fs from "node:fs";
 import path from "node:path";
 import matter from "gray-matter";
+import { unified } from "unified";
+import remarkParse from "remark-parse";
 import remarkGfm from "remark-gfm";
+import remarkRehype from "remark-rehype";
 import rehypeSlug from "rehype-slug";
 import rehypePrettyCode from "rehype-pretty-code";
 import rehypeAutolinkHeadings from "rehype-autolink-headings";
+import { toString as hastToString } from "hast-util-to-string";
 
 const postsDirectory = path.join(process.cwd(), "src/content/posts");
 
@@ -64,6 +68,12 @@ const attachPrettyCodeTitleToPre = (node: any) => {
   }
 };
 
+export type Heading = {
+  id: string;
+  text: string;
+  level: 1 | 2;
+};
+
 export type PostSummary = {
   slug: string;
   title: string;
@@ -82,6 +92,54 @@ export type PostSummary = {
 
 export type PostData = PostSummary & {
   content: string;
+  headings: Heading[];
+};
+
+const headingProcessor = unified()
+  .use(remarkParse)
+  .use(remarkGfm)
+  .use(remarkRehype)
+  .use(rehypeSlug);
+
+const collectHastHeadings = (
+  node: any,
+  out: { id: string; rawLevel: number; text: string }[],
+) => {
+  if (!node) return;
+  if (node.type === "element" && /^h[1-3]$/.test(node.tagName)) {
+    const id = node.properties?.id;
+    if (typeof id === "string" && id.length > 0) {
+      out.push({
+        id,
+        rawLevel: Number.parseInt(node.tagName[1]),
+        text: hastToString(node),
+      });
+    }
+    return;
+  }
+  if (!Array.isArray(node.children)) return;
+  for (const child of node.children) collectHastHeadings(child, out);
+};
+
+const extractHeadings = (content: string): Heading[] => {
+  const tree = headingProcessor.runSync(headingProcessor.parse(content));
+  const collected: { id: string; rawLevel: number; text: string }[] = [];
+  collectHastHeadings(tree, collected);
+  if (collected.length === 0) return [];
+
+  const levels = [...new Set(collected.map((h) => h.rawLevel))].sort(
+    (a, b) => a - b,
+  );
+  const primary = levels[0];
+  const secondary = levels[1];
+
+  return collected
+    .filter((h) => h.rawLevel === primary || h.rawLevel === secondary)
+    .map((h) => ({
+      id: h.id,
+      text: h.text,
+      level: h.rawLevel === primary ? 1 : 2,
+    }));
 };
 
 const getPostData = (filename: string) => {
@@ -102,6 +160,7 @@ const getPostData = (filename: string) => {
   return {
     slug,
     content,
+    headings: extractHeadings(content),
     frontmatter: {
       title: data.title as string,
       date: dateStr,
@@ -149,11 +208,11 @@ export function getPostBySlug(slug: string): PostData {
   if (!/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(slug)) {
     throw new Error(`Invalid slug: "${slug}"`);
   }
-  const { content, frontmatter } = getPostData(`${slug}.mdx`);
+  const { content, headings, frontmatter } = getPostData(`${slug}.mdx`);
   if (!isPostVisible(frontmatter)) {
     throw new Error(`Post "${slug}" is not available`);
   }
-  return { slug, ...frontmatter, content };
+  return { slug, ...frontmatter, content, headings };
 }
 
 export const mdxOptions = {

@@ -1,73 +1,26 @@
 'use client'
 
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import type { Heading } from '@/lib/posts'
 
-interface Heading {
-  id: string
-  text: string
-  level: 1 | 2
+type TableOfContentsProps = {
+  headings: Heading[]
 }
 
-export default function TableOfContents() {
-  const [headings, setHeadings] = useState<Heading[]>([])
+export default function TableOfContents({ headings }: TableOfContentsProps) {
   const [displayActiveIdx, setDisplayActiveIdx] = useState(-1)
-  const [navWidth, setNavWidth] = useState(192)
   const targetIdxRef = useRef(-1)
   const itemRefs = useRef<Map<string, HTMLLIElement>>(new Map())
 
-  // Detect headings on mount
-  useEffect(() => {
-    const elements = Array.from(
-      document.querySelectorAll<HTMLElement>('article h1[id], article h2[id], article h3[id]')
+  // Estimate ideal nav width from heading text (system-ui 10px 500 → ~5.5px/char).
+  // Server- and client-safe (no DOM read), capped at the w-48 = 192px nav width.
+  const navWidth = useMemo(() => {
+    const maxChars = Math.max(
+      0,
+      ...headings.map((h) => h.text.length + (h.level === 2 ? 3 : 0))
     )
-
-    if (elements.length === 0) return
-
-    const levels = [...new Set(elements.map((el) => Number.parseInt(el.tagName[1])))].sort(
-      (a, b) => a - b
-    )
-    const primary = levels[0]
-    const secondary = levels[1]
-
-    const parsed: Heading[] = elements
-      .filter((el) => {
-        const level = Number.parseInt(el.tagName[1])
-        return level === primary || level === secondary
-      })
-      .map((el) => ({
-        id: el.id,
-        text: el.textContent || '',
-        level: Number.parseInt(el.tagName[1]) === primary ? 1 : 2,
-      }))
-
-    const frame = requestAnimationFrame(() => {
-      setHeadings(parsed)
-    })
-
-    return () => cancelAnimationFrame(frame)
-  }, [])
-
-  // Compute ideal nav width: fit content or cap at 192px (w-48)
-  useEffect(() => {
-    if (headings.length === 0) return
-    const canvas = document.createElement('canvas')
-    const ctx = canvas.getContext('2d')
-    if (!ctx) return
-
-    ctx.font = '500 10px system-ui, -apple-system, sans-serif'
-    let maxWidth = 0
-    for (const heading of headings) {
-      const indent = heading.level === 2 ? 12 : 0
-      const w = ctx.measureText(heading.text).width + indent
-      maxWidth = Math.max(maxWidth, w)
-    }
-
-    const needed = Math.ceil(maxWidth) + 32 // 28px bar space + 4px buffer
-    const frame = requestAnimationFrame(() => {
-      setNavWidth(Math.min(needed, 192))
-    })
-
-    return () => cancelAnimationFrame(frame)
+    const estimated = Math.ceil(maxChars * 5.5) + 32
+    return Math.min(estimated, 192)
   }, [headings])
 
   // Scroll handler — sets the target index immediately
@@ -139,6 +92,7 @@ export default function TableOfContents() {
           {headings.map((heading, index) => {
             const isActive = displayActiveIdx === index
             const delay = `${index * 30}ms`
+            const finalWidth = heading.level === 1 ? '1.25rem' : '0.75rem'
 
             return (
               <li
@@ -184,6 +138,9 @@ export default function TableOfContents() {
                         : 'bg-gray-300 dark:bg-zinc-700'}
                     `}
                     style={{
+                      // CSS var consumed by the @keyframes toc-bar-in (global.css)
+                      ['--toc-bar-w' as string]: finalWidth,
+                      animation: `toc-bar-in 400ms ease-out calc(150ms + ${index} * 40ms) both`,
                       transition: `background-color 200ms, width 300ms ${delay}, opacity 300ms ${delay}`,
                     }}
                   />

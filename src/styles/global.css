@@ -107,3 +107,21 @@ code {
   from { background-position: 0 0; }
   to { background-position: -1078px 0; }
 }
+
+@keyframes toc-bar-in {
+  from {
+    width: 4px;
+    opacity: 0;
+  }
+  to {
+    width: var(--toc-bar-w);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  @keyframes toc-bar-in {
+    from { width: var(--toc-bar-w); opacity: 1; }
+    to   { width: var(--toc-bar-w); opacity: 1; }
+  }
+}

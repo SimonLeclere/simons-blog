@@ -44,6 +44,7 @@ describe('getAllPosts', () => {
     const slugs = posts.map(p => p.slug)
     expect(slugs).toContain('hello-world')
     expect(slugs).toContain('second-post')
+    expect(slugs).toContain('with-headings')
     expect(slugs).not.toContain('draft-post')
   })
 
@@ -51,6 +52,7 @@ describe('getAllPosts', () => {
     const posts = getAllPosts()
     expect(posts[0].slug).toBe('second-post')   // 2025-03-10
     expect(posts[1].slug).toBe('hello-world')    // 2025-01-15
+    expect(posts[2].slug).toBe('with-headings') // 2024-12-01
   })
 
   it('parses frontmatter correctly', () => {
@@ -99,5 +101,41 @@ describe('getPostBySlug', () => {
 
   it('throws for draft posts', () => {
     expect(() => getPostBySlug('draft-post')).toThrow('not available')
+  })
+})
+
+describe('heading extraction', () => {
+  it('returns headings collected from h1/h2/h3, ignoring deeper levels', () => {
+    const post = getPostBySlug('with-headings')
+    // Source has 2 h2 + 2 h3 + 1 h4. h4 is dropped (primary=h2, secondary=h3).
+    expect(post.headings).toHaveLength(4)
+  })
+
+  it('normalizes levels: lowest depth → 1, next → 2', () => {
+    const post = getPostBySlug('with-headings')
+    const levels = post.headings.map((h) => h.level)
+    expect(levels).toEqual([1, 2, 1, 2])
+  })
+
+  it('produces slugs that match rehype-slug output', () => {
+    const post = getPostBySlug('with-headings')
+    const ids = post.headings.map((h) => h.id)
+    expect(ids).toEqual([
+      'premier-titre',
+      'sous-titre',
+      'deuxième-titre',
+      'code-dans-un-titre',
+    ])
+  })
+
+  it('extracts inline code text inside headings', () => {
+    const post = getPostBySlug('with-headings')
+    const codeHeading = post.headings.find((h) => h.id === 'code-dans-un-titre')!
+    expect(codeHeading.text).toBe('code() dans un titre')
+  })
+
+  it('returns an empty array when a post has no h1/h2/h3', () => {
+    const post = getPostBySlug('second-post')
+    expect(post.headings).toEqual([])
   })
 })
