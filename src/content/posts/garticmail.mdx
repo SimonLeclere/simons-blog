@@ -1,0 +1,104 @@
+---
+title: "I gave Claude a Gmail account"
+date: "2026-06-09"
+excerpt: "Building an asynchronous Gartic Phone game over email, where Claude handles everything from orchestration to snarky mission letters — with no server, no database, and one cron job."
+icon: "🎨"
+author: "SimonLeclere"
+authorName: "Simon Leclere"
+draft: true
+---
+
+During our final internships, my friends and I kept in touch the old-fashioned way: email. Not group chats, not voice calls — actual emails, the kind where you write three paragraphs about what you've been up to and sign off with something half-ironic. It sounds absurd in 2025, but there's something refreshing about asynchronous, low-pressure catch-ups. No one has to be available at the same time.
+
+At some point, one of us suggested we play [Gartic Phone](https://garticphone.com/) together. For those unfamiliar: it's a chain drawing game where players alternate between writing a phrase and drawing what the previous person wrote. The catch is it's designed to be played live, all at once. We are not available at the same time.
+
+"What if we just... played it over email?"
+
+That question sat in my inbox for a few days before I came up with an answer.
+
+## The pitch no one asked for
+
+I was already spending an embarrassing amount of time in the Claude API. My friends had heard plenty of jokes about my token bills. So when the email came up again, I had a proposal: what if Claude was the game master?
+
+Not Claude as a chatbot you talk to. Claude as a piece of infrastructure — fetching emails, managing game state, sending missions to each player, and eventually orchestrating the grand reveal at the end. A backend made of prompts.
+
+The name almost wrote itself: **GarticMail**.
+
+## How it actually works
+
+The architecture is deliberately minimal:
+
+- **Transport**: Gmail. Players submit drawings and phrases by replying to an email. No app, no login, no link to click.
+- **State**: a single `state.json` file, committed to a Git branch per game. No database.
+- **Logic**: Claude Code, running as a CLI agent from a cron job, once a day.
+- **Persistence**: Git. Every run commits the updated state, so the full history is diffable and auditable.
+
+Each day, Claude wakes up, fetches the inbox, figures out who has submitted and who hasn't, advances the round if everyone's done, and sends the next mission. When the game ends, it generates GIFs of each chain and writes a reveal email — complete with absurd art critiques and custom awards for each player.
+
+The entire "backend" is a CLAUDE.md file and a handful of Python scripts for the parts that need determinism (email sending, GIF generation, date arithmetic).
+
+## Leaving Claude to figure out the data model
+
+One decision I made early on: I wouldn't hand-design the state schema. I described what the game needed — chains, rounds, player submissions, task queues — and let Claude propose the structure. Then I iterated on it through conversation, the same way you'd spec something with a junior dev.
+
+The result is a `state.json` that's actually readable. It has a `tasks` array for pending work, a `chains/` directory for each game thread, a clear status enum. It's not what I would have designed top-down, and it's probably better for it.
+
+There's something interesting here about how LLMs handle schema design. They default to conventions — flat arrays over nested objects, string enums over booleans for anything that might grow. Claude seems to have read enough codebases to have opinions, and most of them are reasonable.
+
+## The personality is a feature
+
+The part that surprised me most: Claude has a character.
+
+Every email from the game master is signed by a sardonic, slightly world-weary host who complains about having to read the players' "disasters" and offers encouragement in the form of thinly veiled insults. Players get things like:
+
+> "Your phrase has been received. I have read it. I have survived. You're welcome."
+
+This wasn't an afterthought — the personality is specified in a `docs/CLAUDE.md` that reads more like a character brief than a system prompt. No corporate sign-offs. No emoji in the body. Variable sarcasm intensity. Never the same closing twice.
+
+What's interesting is that this *is* a product feature. It's what makes the game feel like a game and not a scheduling tool. And it lives entirely in natural language, which means you can change it with a sentence. Try doing that with a string constant.
+
+## The bugs you don't expect
+
+Running an LLM as a backend introduces a category of bugs that don't show up in most projects: *behavioral* bugs.
+
+The classic software bug is wrong logic. The LLM bug is subtler: the logic is right, but the *interpretation* drifted. At some point, Claude started sending confirmation emails twice — not because of a code error, but because it was re-reading the inbox and re-processing registrations it had already handled. The fix was an idempotency guard, same as you'd add to any distributed system. But the root cause was a judgment call about "has this already been done?" going slightly wrong.
+
+There was also the first-name extraction issue. Players register by sending an email, and Claude is supposed to figure out their first name from the message. For a while it was being too clever — inferring names from sign-offs and email signatures rather than reading the obvious header. A few players got missioned as "Best," which is indeed a name, but not theirs.
+
+These bugs are fixable, but they're a reminder that you're not debugging code — you're debugging reasoning.
+
+## The first game is still running
+
+We started the first real game a few weeks ago. As of today, it's not over yet — we're mid-chain, somewhere between drawings and phrases, everyone playing at their own pace.
+
+I don't know yet how the reveal will land. I don't know if the GIFs will generate cleanly, if the palmarès will be funny, or if someone will have drawn something so incomprehensible that the chain breaks in a spectacular way. That uncertainty is part of it.
+
+What I do know is that the infrastructure held. Claude woke up every morning, read the inbox, moved the game forward, and went back to sleep. No one had to be available at the same time. The emails arrived. People replied.
+
+It worked exactly as weirdly as I hoped.
+
+## The interface is an inbox
+
+Here's the detail that still amuses me: I've barely opened the repository since the first game started.
+
+When something goes wrong — a player missed a round, the deadline needs adjusting, someone wants to change their submission — I don't pull up the code. I send an email. To Claude. The same way players send their drawings. He reads it, figures out what needs to happen, updates the state, and replies to confirm.
+
+I am, functionally, an admin player in my own game.
+
+There's something genuinely funny about this. I built a system where the interface is an inbox, and then I ended up using it as the primary way to interact with the infrastructure I built. I didn't design that — it just happened to be the most natural thing to do.
+
+It also means that for anyone else running a game, there's no ops dashboard, no admin panel to learn. You just write an email.
+
+## What this is actually about
+
+I want to be precise about what "Claude as a backend" means here, because the phrase is easy to misread.
+
+Claude isn't doing anything intelligent in the AI-demo sense. It's not generating novel game mechanics or making creative decisions. What it's doing is *holding together a workflow that's too irregular for a traditional script but too simple to justify a proper service*.
+
+The rules are in natural language. The edge cases are handled by judgment, not conditionals. The output is prose that needs to sound like a person. For that specific set of requirements, a language model is genuinely the right tool — not because it's impressive, but because it fits.
+
+The cron job runs. The emails go out. The game goes on.
+
+<Callout type="info">
+  The source code for GarticMail is available on GitHub if you want to run your own game.
+</Callout>
